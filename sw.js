@@ -51,12 +51,11 @@ selfaddEventListener('fetch', function (event) {
     console.log("Service worker fetching");
     event.respondWith(
         caches.match(event.request).then(function (response) {
-
             if (response) {
                 console.log("Service worker available", event.request.url);
                 return response;
             }
             return fetch(event.request);
         })
-    )
-})
+    );
+}); 
