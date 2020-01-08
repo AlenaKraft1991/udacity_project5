@@ -1,6 +1,5 @@
 var fixedCacheName = 'restaurant-cache';
-
-let linksToCache = [
+var cacheFiles = [
     "/",
     "/index.html",
     "/restaurant.html",
@@ -21,19 +20,19 @@ let linksToCache = [
     "/img/10.jpg",
 ];
 
+// Add three event listeners for the different states of the service worker: install, activate and fetch.
 selfaddEventListener('install', function (event) {
+    console.log("Service worker installed"); 
     event.waitUntil(
         caches.open(fixedCacheName).then(function (cache) {
             console.log(cache);
-            return cache.addAll(linksToCache);
-
-        }).catch(error => {
-            console.log(error);
+            return cache.addAll(cacheFiles);
         })
     );
 });
 
 selfaddEventListener('active', function (event) {
+    console.log("Service worker activated");
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
             return Promise.all(
@@ -49,9 +48,15 @@ selfaddEventListener('active', function (event) {
 });
 
 selfaddEventListener('fetch', function (event) {
+    console.log("Service worker fetching"); 
     event.respondWith(
         caches.match(event.request).then(function (response) {
-            return response || fetch(event.request);
-        })
-    );
-}); 
+
+            if (response) {
+					console.log("Service worker available", event.request.url);
+					return response;
+				}
+				return fetch(event.request);
+			})	
+	)
+})
