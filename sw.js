@@ -21,7 +21,7 @@ var cacheFiles = [
 ];
 
 // Add three event listeners for the different states of the service worker: install, activate and fetch.
-selfaddEventListener('install', function (event) {
+self.addEventListener('install', function (event) {
     console.log("Service worker installed");
     event.waitUntil(
         caches.open(fixedCacheName).then(function (cache) {
@@ -31,7 +31,7 @@ selfaddEventListener('install', function (event) {
     );
 });
 
-selfaddEventListener('active', function (event) {
+self.addEventListener('active', function (event) {
     console.log("Service worker activated");
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
@@ -47,10 +47,10 @@ selfaddEventListener('active', function (event) {
     );
 });
 
-selfaddEventListener('fetch', function (event) {
+self.addEventListener('fetch', function (event) {
     console.log("Service worker fetching");
     event.respondWith(
-        caches.match(event.request).then(function (response) {
+        caches.match(event.request, { ignoreSearch: true }).then(function (response) {
             if (response) {
                 console.log("Service worker available", event.request.url);
                 return response;
